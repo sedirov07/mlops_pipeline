@@ -1,0 +1,148 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>MLOps Pipeline Report - 2026-01-15T05:53:22.548041</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; background: #f5f5f5; }
+            .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+            h2 { color: #555; margin-top: 30px; }
+            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background: #f8f9fa; font-weight: 600; }
+            tr:hover { background: #f8f9fa; }
+            .summary { background: #e7f3ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .summary li { margin: 8px 0; font-size: 16px; }
+            .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+            .badge-success { background: #d4edda; color: #155724; }
+            .badge-danger { background: #f8d7da; color: #721c24; }
+            .badge-info { background: #d1ecf1; color: #0c5460; }
+            .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }
+            .metric-card { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+            .metric-value { font-size: 22px; font-weight: bold; color: #007bff; }
+            .metric-label { color: #666; margin-top: 5px; font-size: 13px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>📋 MLOps Pipeline Report</h1>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">manual__2026-01-15T05:51:50.123975+00:00</div>
+                    <div class="metric-label">Run ID</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">🔴 Detected</div>
+                    <div class="metric-label">Data Drift</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">N/A</div>
+                    <div class="metric-label">Statistical Test</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">🔴 No</div>
+                    <div class="metric-label">Model Promoted</div>
+                </div>
+            </div>
+            
+            <p><strong>Timestamp:</strong> 2026-01-15T05:53:22.548041</p>
+            <p><strong>DAG:</strong> mlops_monitoring_pipeline</p>
+            
+            <h2>📝 Summary</h2>
+            <div class="summary">
+                <ul>
+                    <li>✓ Data drift detected - retraining triggered</li><li>✓ Model retrained: N/A</li>
+                </ul>
+            </div>
+            
+            <h2>📈 Data Drift Analysis</h2>
+            <table>
+                <tr><th>Parameter</th><th>Value</th></tr>
+                <tr><td>Drift Detected</td><td>🔴 Detected</td></tr>
+                <tr><td>Drifted Columns</td><td>5 / 5</td></tr>
+                <tr><td>Drift Share</td><td>1.0</td></tr>
+                <tr><td>Evidently Report</td><td><a href="/opt/airflow/logs/evidently_drift_report.html">View Full Report</a></td></tr>
+            </table>
+            
+            
+        <h2>🏋️ Training Results</h2>
+        <table>
+            <tr><th>Parameter</th><th>Value</th></tr>
+            <tr><td>Best Model</td><td>None</td></tr>
+            <tr><td>Model Name</td><td>iris_pycaret_model</td></tr>
+            <tr><td>Version</td><td>10</td></tr>
+            <tr><td>MLflow Run ID</td><td>None</td></tr>
+        </table>
+        
+            
+            
+            <h2>📊 Model Evaluation (on drifted data)</h2>
+            <table>
+                <tr><th>Metric</th><th>Production (v7)</th><th>Staging (v10)</th><th>Δ</th></tr>
+                <tr><td>Accuracy</td><td>0.7000</td><td>0.0000</td><td>-0.7000</td></tr>
+                <tr><td>Precision (macro)</td><td>0.5652</td><td>0.0000</td><td>-0.5652</td></tr>
+                <tr><td>Recall (macro)</td><td>0.5714</td><td>0.0000</td><td>-0.5714</td></tr>
+                <tr><td>F1 (macro)</td><td>0.5513</td><td>0.0000</td><td>-0.5513</td></tr>
+            </table>
+            
+            
+            
+            
+            
+        <h2>🔬 A/B Testing via API (Live Traffic Simulation)</h2>
+        <table>
+            <tr><th>Variant</th><th>Requests</th><th>Traffic %</th><th>Accuracy</th><th>F1 (macro)</th></tr>
+            <tr>
+                <td>Production (A)</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.0000</td>
+                <td>0.0000</td>
+            </tr>
+            <tr>
+                <td>Staging (B)</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.0000</td>
+                <td>0.0000</td>
+            </tr>
+        </table>
+        <p style="color: #666; font-size: 14px;">
+            Total requests: 100 | 
+            Successful: 0
+        </p>
+        
+            
+            <h2>📜 Historical A/B Testing (from logs)</h2>
+            <table>
+                <tr><th>Variant</th><th>Requests</th><th>Traffic Share</th></tr>
+                <tr><td>Production (A)</td><td>0</td><td>0.00%</td></tr>
+                <tr><td>Staging (B)</td><td>0</td><td>0.00%</td></tr>
+            </table>
+            
+            <h2>🏷️ Model Registry Status</h2>
+            <table>
+                <tr><th>Stage</th><th>Version</th><th>Run ID</th></tr>
+                <tr><td>Production</td><td>7</td><td>256a384e...</td></tr>
+                <tr><td>Staging</td><td>10</td><td>70f16d5b...</td></tr>
+            </table>
+            
+            <h2>🚀 Promotion Decision</h2>
+            <table>
+                <tr><th>Parameter</th><th>Value</th></tr>
+                <tr><td>Promoted</td><td>🔴 No</td></tr>
+                <tr><td>Reason</td><td>staging_eval_error</td></tr>
+                <tr><td>Model Name</td><td>N/A</td></tr>
+                <tr><td>Version</td><td>N/A</td></tr>
+                <tr><td>New Stage</td><td>N/A</td></tr>
+            </table>
+            
+            <hr style="margin-top: 40px;">
+            <p style="color: #666; font-size: 12px;">Generated by MLOps Pipeline • 2026-01-15T05:53:22.548041</p>
+        </div>
+    </body>
+    </html>
+    

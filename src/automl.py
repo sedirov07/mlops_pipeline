@@ -36,9 +36,15 @@ def load_data(data_path: Optional[str] = None):
     df = df.rename(columns={iris.target.name: 'target'})
     return df
 
+def get_project_root() -> str:
+    """Возвращает абсолютный путь к корню проекта."""
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def ensure_dirs():
-    os.makedirs("models", exist_ok=True)
-    os.makedirs("logs", exist_ok=True)
+    project_root = get_project_root()
+    os.makedirs(os.path.join(project_root, "models"), exist_ok=True)
+    os.makedirs(os.path.join(project_root, "logs"), exist_ok=True)
 
 
 def patch_mlflow_stack_copy():
@@ -88,7 +94,9 @@ def run_automl(data_path: Optional[str] = None):
     # Setup logging to file
     logger = logging.getLogger("automl")
     logger.setLevel(logging.INFO)
-    fh = logging.FileHandler("logs/automl.log")
+    project_root = get_project_root()
+    log_file = os.path.join(project_root, "logs", "automl.log")
+    fh = logging.FileHandler(log_file)
     fh.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
@@ -158,11 +166,12 @@ def run_automl(data_path: Optional[str] = None):
         mlflow.log_metric('test_recall_macro', rec)
         mlflow.log_metric('test_f1_macro', f1)
 
-        # Save local fallback
-        model_path = os.path.join("models", "best_model_pycaret")
+        # Save local fallback (абсолютный путь к корню проекта)
+        model_path = os.path.join(project_root, "models", "best_model_pycaret")
         save_model(best, model_path)
         artifact_file = model_path + ".pkl"
         artifact_present = os.path.exists(artifact_file)
+        logger.info("Local model saved to %s (exists: %s)", artifact_file, artifact_present)
 
         # Log model to MLflow as sklearn model (artifact path: model)
         registered_name = os.getenv("MLFLOW_REGISTERED_NAME", "iris_pycaret_model")

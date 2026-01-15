@@ -16,7 +16,16 @@ load_dotenv()
 
 TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
 REGISTRY_NAME = os.getenv("MLFLOW_REGISTERED_NAME", "iris_pycaret_model")
-LOCAL_MODEL_FILE = os.path.join('models', 'best_model_pycaret.pkl')
+
+# Определяем корень проекта для корректных путей
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+LOCAL_MODEL_FILE = os.path.join(PROJECT_ROOT, 'models', 'best_model_pycaret.pkl')
+
+# Настраиваем путь к артефактам MLflow (для локального запуска)
+# Артефакты хранятся в Docker volume, но смонтированы в ./mlflow_db/artifacts
+MLFLOW_ARTIFACTS_PATH = os.path.join(PROJECT_ROOT, "mlflow_db", "artifacts")
+if os.path.exists(MLFLOW_ARTIFACTS_PATH):
+    os.environ["MLFLOW_ARTIFACT_URI"] = f"file://{MLFLOW_ARTIFACTS_PATH}"
 
 mlflow.set_tracking_uri(TRACKING_URI)
 
@@ -68,15 +77,46 @@ def load_model_from_registry(stage: str) -> Tuple[Optional[Any], Optional[str]]:
         return None, None
 
     if not versions:
+        router_logger.info("No model versions found for %s in %s stage", REGISTRY_NAME, stage)
         return None, None
 
     version = versions[0].version
+    run_id = versions[0].run_id
+    source = versions[0].source  # путь к артефакту в MLflow
+    
+    # Для локального запуска: преобразуем Docker путь в локальный
+    # Docker: /mlflow/artifacts/1/<run_id>/artifacts/model
+    # Local:  ./mlflow_db/artifacts/1/<run_id>/artifacts/model
+    if source.startswith("/mlflow/artifacts"):
+        local_source = source.replace("/mlflow/artifacts", MLFLOW_ARTIFACTS_PATH)
+        if os.path.exists(local_source):
+            try:
+                model = mlflow.pyfunc.load_model(local_source)
+                router_logger.info("Loaded model %s version %s from %s stage (local artifacts path)", 
+                                  REGISTRY_NAME, version, stage)
+                return model, version
+            except Exception as exc:
+                router_logger.warning("Failed to load from local path %s: %s", local_source, exc)
+    
+    # Пробуем загрузить модель через runs:/ URI
+    model_uri = f"runs:/{run_id}/model"
+    try:
+        model = mlflow.pyfunc.load_model(model_uri)
+        router_logger.info("Loaded model %s version %s from %s stage (run_id=%s)", 
+                          REGISTRY_NAME, version, stage, run_id)
+        return model, version
+    except Exception as exc:
+        router_logger.warning("Failed to load model %s stage %s via runs URI: %s", REGISTRY_NAME, stage, exc)
+        
+    # Fallback: пробуем через models:/ URI
     model_uri = f"models:/{REGISTRY_NAME}/{stage}"
     try:
         model = mlflow.pyfunc.load_model(model_uri)
+        router_logger.info("Loaded model %s version %s from %s stage (models URI)", 
+                          REGISTRY_NAME, version, stage)
         return model, version
     except Exception as exc:
-        router_logger.warning("Failed to load model %s stage %s: %s", REGISTRY_NAME, stage, exc)
+        router_logger.warning("Failed to load model %s stage %s via models URI: %s", REGISTRY_NAME, stage, exc)
         return None, version
 
 
@@ -186,17 +226,24 @@ def predict():
         return jsonify({'error': 'model not found'}), 500
 
     features_df = pd.DataFrame([features])
-    prediction = model.predict(features_df)[0]
+    prediction_raw = model.predict(features_df)
+    # Безопасное извлечение первого элемента (избегаем DeprecationWarning)
+    if hasattr(prediction_raw, 'item'):
+        prediction_value = prediction_raw[0].item() if hasattr(prediction_raw[0], 'item') else prediction_raw[0]
+    else:
+        prediction_value = prediction_raw[0]
+    
+    # Приводим к числу если возможно
     try:
-        prediction_value = float(prediction)
+        prediction_value = float(prediction_value)
     except (TypeError, ValueError):
-        prediction_value = prediction
+        pass
 
     log_inference(variant, active_stage, version, features, prediction_value, user_id)
     response = {
         'variant': variant,
         'stage': active_stage,
-        'version': version,
+        'version': str(version),
         'prediction': prediction_value,
     }
     return jsonify(response)

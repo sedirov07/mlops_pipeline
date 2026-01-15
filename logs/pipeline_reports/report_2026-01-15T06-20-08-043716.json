@@ -1,0 +1,92 @@
+{
+  "run_id": "manual__2026-01-15T06:18:38.719535+00:00",
+  "timestamp": "2026-01-15T06:20:08.043716",
+  "dag_id": "mlops_monitoring_pipeline",
+  "execution_date": "2026-01-15 06:18:38.719535+00:00",
+  "drift": {
+    "detected": true,
+    "share_of_drifted_columns": 1.0,
+    "number_of_drifted_columns": 5,
+    "number_of_columns": 5,
+    "drift_by_columns": {},
+    "report_path": "/opt/airflow/logs/evidently_drift_report.html"
+  },
+  "training": {
+    "executed": true,
+    "model_name": "iris_pycaret_model",
+    "model_version": "14",
+    "run_id": null,
+    "best_model": null,
+    "metrics": {
+      "test_accuracy": 0.8823529411764706,
+      "test_precision_macro": 0.8881118881118882,
+      "test_recall_macro": 0.8777777777777778,
+      "test_f1_macro": 0.8809523809523809
+    }
+  },
+  "evaluation": {
+    "production": {
+      "stage": "Production",
+      "version": "7",
+      "model_uri": "models:/iris_pycaret_model/Production",
+      "error": "No such file or directory: '/mlflow/artifacts/1/256a384e1561453e995f6a41f1121019/artifacts/model/.'"
+    },
+    "staging": {
+      "stage": "Staging",
+      "version": "14",
+      "metrics": {
+        "accuracy": 0.88,
+        "precision_macro": 0.9444444444444445,
+        "recall_macro": 0.75,
+        "f1_macro": 0.7696969696969697,
+        "f1_confidence_interval": {
+          "mean": 0.7514737412110003,
+          "std": 0.10731636764009882,
+          "lower": 0.6091615956727519,
+          "upper": 1.0
+        }
+      },
+      "model_uri": "models:/iris_pycaret_model/Staging"
+    },
+    "evaluated_on": "drifted",
+    "recommendation": "keep_current",
+    "promotion_reason": "missing_predictions"
+  },
+  "promotion": {
+    "promoted": false,
+    "reason": "No promotion performed"
+  },
+  "model_registry": {
+    "model_name": "iris_pycaret_model",
+    "production": {
+      "version": "7",
+      "run_id": "256a384e1561453e995f6a41f1121019",
+      "status": "READY",
+      "creation_timestamp": 1768452979729
+    },
+    "staging": {
+      "version": "14",
+      "run_id": "c43eef9e28c344499519a58ec9b9f600",
+      "status": "READY",
+      "creation_timestamp": 1768457981826
+    }
+  },
+  "ab_testing_logs": {
+    "production_requests": 0,
+    "staging_requests": 0
+  },
+  "ab_testing_api": {
+    "total_requests": 88,
+    "successful_requests": 0,
+    "production_requests": 0,
+    "staging_requests": 0,
+    "production_share": null,
+    "staging_share": null,
+    "production_metrics": null,
+    "staging_metrics": null
+  },
+  "summary": [
+    "✓ Data drift detected - retraining triggered",
+    "✓ Model retrained: N/A"
+  ]
+}

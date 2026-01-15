@@ -7,7 +7,11 @@ RUN apt-get update && \
     libgomp1 \
     gcc \
     g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Switch back to airflow user
 USER airflow
+
+# Install API dependencies
+RUN pip install --no-cache-dir uvicorn fastapi pandas joblib python-dotenv

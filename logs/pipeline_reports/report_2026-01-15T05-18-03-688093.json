@@ -1,0 +1,115 @@
+{
+  "run_id": "manual__2026-01-15T05:16:38.196322+00:00",
+  "timestamp": "2026-01-15T05:18:03.688093",
+  "dag_id": "mlops_monitoring_pipeline",
+  "execution_date": "2026-01-15 05:16:38.196322+00:00",
+  "drift": {
+    "detected": true,
+    "share_of_drifted_columns": 1.0,
+    "number_of_drifted_columns": 5,
+    "number_of_columns": 5,
+    "drift_by_columns": {},
+    "report_path": "/opt/airflow/logs/evidently_drift_report.html"
+  },
+  "training": {
+    "executed": true,
+    "model_name": "iris_pycaret_model",
+    "model_version": "8",
+    "run_id": null,
+    "best_model": null,
+    "metrics": {
+      "test_accuracy": 0.9387755102040817,
+      "test_precision_macro": 0.9565217391304347,
+      "test_recall_macro": 0.9333333333333332,
+      "test_f1_macro": 0.9397071490094745
+    }
+  },
+  "evaluation": {
+    "production": {
+      "stage": "Production",
+      "version": "7",
+      "metrics": {
+        "accuracy": 0.8064516129032258,
+        "precision_macro": 0.9047619047619048,
+        "recall_macro": 0.7777777777777777,
+        "f1_macro": 0.7777777777777778,
+        "f1_confidence_interval": {
+          "mean": 0.7714124922794567,
+          "std": 0.0744006414572098,
+          "lower": 0.6131797235023041,
+          "upper": 0.9095439988861042
+        }
+      },
+      "model_uri": "models:/iris_pycaret_model/Production"
+    },
+    "staging": {
+      "stage": "Staging",
+      "version": "8",
+      "metrics": {
+        "accuracy": 0.8709677419354839,
+        "precision_macro": 0.8974358974358975,
+        "recall_macro": 0.9111111111111111,
+        "f1_macro": 0.8881118881118882,
+        "f1_confidence_interval": {
+          "mean": 0.882073144274236,
+          "std": 0.056337774542579044,
+          "lower": 0.7666520467836256,
+          "upper": 0.9726459521561971
+        }
+      },
+      "model_uri": "models:/iris_pycaret_model/Staging"
+    },
+    "evaluated_on": "drifted",
+    "recommendation": "keep_current",
+    "promotion_reason": "improvement_not_statistically_significant"
+  },
+  "statistical_test": {
+    "p_value": 0.135,
+    "is_significant": "True",
+    "alpha": 0.05,
+    "delta_mean": 0.11166781138554491,
+    "delta_std": 0.09818057420292593,
+    "delta_ci_lower": -0.09463959173010915,
+    "delta_ci_upper": 0.2979327054327054,
+    "n_bootstrap_iterations": 1000
+  },
+  "promotion": {
+    "promoted": false,
+    "reason": "No promotion performed"
+  },
+  "model_registry": {
+    "model_name": "iris_pycaret_model",
+    "production": {
+      "version": "7",
+      "run_id": "256a384e1561453e995f6a41f1121019",
+      "status": "READY",
+      "creation_timestamp": 1768452979729
+    },
+    "staging": {
+      "version": "8",
+      "run_id": "0f22222d750f49bbaece71da4a716873",
+      "status": "READY",
+      "creation_timestamp": 1768454255878
+    }
+  },
+  "ab_testing_logs": {
+    "production_requests": 0,
+    "staging_requests": 0
+  },
+  "ab_testing_api": {
+    "total_requests": 107,
+    "successful_requests": 0,
+    "production_requests": 0,
+    "staging_requests": 0,
+    "production_share": null,
+    "staging_share": null,
+    "production_metrics": null,
+    "staging_metrics": null
+  },
+  "summary": [
+    "✓ Data drift detected - retraining triggered",
+    "✓ Model retrained: N/A",
+    "✓ Offline Evaluation: Staging F1=0.8881, Production F1=0.7778, Δ=+0.1103",
+    "✓ Stage 1 - Statistical test: PASSED (p=0.1350 < α=0.05)"
+  ]
+}

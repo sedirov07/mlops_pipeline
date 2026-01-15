@@ -220,3 +220,4 @@ catboost_info/
 # MLflow artifacts and database
 mlflow_db/
 mlruns/
+models/
